@@ -194,8 +194,8 @@ prompt_hg() {
     zstyle ':vcs_info:*' check-for-changes true
     zstyle ':vcs_info:*' stagedstr '✚'
     zstyle ':vcs_info:*' unstagedstr '●'
-    zstyle ':vcs_info:*' formats ' %u%c'
-    zstyle ':vcs_info:*' actionformats ' %u%c'
+    zstyle ':vcs_info:*' formats ' %u%i%c'
+    zstyle ':vcs_info:*' actionformats ' %u%i%c'
     vcs_info
     echo -n "${PL_BRANCH_CHAR} ${rev_and_branch}${vcs_info_msg_0_%% }"
   fi
