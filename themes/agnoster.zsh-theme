@@ -174,37 +174,30 @@ prompt_hg() {
     PL_BRANCH_CHAR=$'\ue0a0'         # 
   }
 
-  local rev st branch
+  local rev_and_branch
   if $(hg id >/dev/null 2>&1); then
-    if $(hg prompt >/dev/null 2>&1); then
-      if [[ $(hg prompt "{status|unknown}") = "?" ]]; then
-        # if files are not added
-        prompt_segment red white
-        st='✚'
-      elif [[ -n $(hg prompt "{status|modified}") ]]; then
-        # if any modification
-        prompt_segment yellow black
-        st='●'
-      else
-        # if working copy is clean
-        prompt_segment green $CURRENT_FG
-      fi
-      echo -n $(hg prompt "${PL_BRANCH_CHAR} {rev}@{branch}") $st
+    rev_and_branch=$(hg id -T "{num}@{branch}" 2>/dev/null)
+
+    # {num} will have a trailing plus with uncommitted changes.
+    if [[ ${rev_and_branch} = *+@* ]]; then
+      prompt_segment yellow black
+      rev_and_branch=${rev_and_branch/+@/@}
     else
-      st=""
-      rev=$(hg id -n 2>/dev/null | sed 's/[^-0-9]//g')
-      branch=$(hg id -b 2>/dev/null)
-      if `hg st | grep -q "^\?"`; then
-        prompt_segment red black
-        st='✚'
-      elif `hg st | grep -q "^[MA]"`; then
-        prompt_segment yellow black
-        st='●'
-      else
-        prompt_segment green $CURRENT_FG
-      fi
-      echo -n "${PL_BRANCH_CHAR} $rev@$branch" $st
+      prompt_segment green $CURRENT_FG
     fi
+
+    setopt promptsubst
+    autoload -Uz vcs_info
+
+    zstyle ':vcs_info:*' enable hg
+    zstyle ':vcs_info:*' get-revision true
+    zstyle ':vcs_info:*' check-for-changes true
+    zstyle ':vcs_info:*' stagedstr '✚'
+    zstyle ':vcs_info:*' unstagedstr '●'
+    zstyle ':vcs_info:*' formats ' %u%c'
+    zstyle ':vcs_info:*' actionformats ' %u%c'
+    vcs_info
+    echo -n "${$PL_BRANCH_CHAR} ${rev_and_branch}${vcs_info_msg_0_%% }"
   fi
 }
 
