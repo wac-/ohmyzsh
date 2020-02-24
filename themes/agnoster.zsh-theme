@@ -176,16 +176,6 @@ prompt_hg() {
 
   local rev_and_branch
   if $(hg id >/dev/null 2>&1); then
-    rev_and_branch=$(hg id -T "{num}@{branch}" 2>/dev/null)
-
-    # {num} will have a trailing plus with uncommitted changes.
-    if [[ ${rev_and_branch} = *+@* ]]; then
-      prompt_segment yellow black
-      rev_and_branch=${rev_and_branch/+@/@}
-    else
-      prompt_segment green $CURRENT_FG
-    fi
-
     setopt promptsubst
     autoload -Uz vcs_info
 
@@ -194,10 +184,16 @@ prompt_hg() {
     zstyle ':vcs_info:*' check-for-changes true
     zstyle ':vcs_info:*' stagedstr '✚'
     zstyle ':vcs_info:*' unstagedstr '●'
-    zstyle ':vcs_info:*' formats ' %u%i%c'
-    zstyle ':vcs_info:*' actionformats ' %u%i%c'
+    zstyle ':vcs_info:hg*:*' hgrevformat "%r" # only show local rev.
+    zstyle ':vcs_info:*' formats '%b %u%c'
+    zstyle ':vcs_info:*' actionformats '%b %u%c'
     vcs_info
-    echo -n "${PL_BRANCH_CHAR} ${rev_and_branch}${vcs_info_msg_0_%% }"
+    if [[ "${vcs_info_msg_0_%% }" = *\ * ]]; then
+      prompt_segment yellow black
+    else
+      prompt_segment green $CURRENT_FG
+    fi
+    echo -n "${PL_BRANCH_CHAR} ${vcs_info_msg_0_%% }"
   fi
 }
 
