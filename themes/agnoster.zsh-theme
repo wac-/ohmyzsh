@@ -109,11 +109,6 @@ prompt_git() {
     repo_path=$(git rev-parse --git-dir 2>/dev/null)
     dirty=$(parse_git_dirty)
     ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git rev-parse --short HEAD 2> /dev/null)"
-    if [[ -n $dirty ]]; then
-      prompt_segment yellow black
-    else
-      prompt_segment green $CURRENT_FG
-    fi
 
     if [[ -e "${repo_path}/BISECT_LOG" ]]; then
       mode=" <B>"
@@ -134,7 +129,11 @@ prompt_git() {
     zstyle ':vcs_info:*' formats ' %u%c'
     zstyle ':vcs_info:*' actionformats ' %u%c'
     vcs_info
-    echo -n "${ref/refs\/heads\//$BRANCH }${vcs_info_msg_0_%% }${mode}"
+    if [[ -n $dirty ]]; then
+      prompt_segment yellow black "${ref/refs\/heads\//$BRANCH }${vcs_info_msg_0_%% }${mode}"
+    else
+      prompt_segment green $CURRENT_FG "${ref/refs\/heads\//$BRANCH }${vcs_info_msg_0_%% }${mode}"
+    fi
   fi
 }
 
@@ -183,11 +182,10 @@ prompt_hg() {
     zstyle ':vcs_info:*' actionformats '%b %u%c'
     vcs_info
     if [[ "${vcs_info_msg_0_%% }" = *\ * ]]; then
-      prompt_segment yellow black
+      prompt_segment yellow black "$BRANCH ${vcs_info_msg_0_%% }"
     else
-      prompt_segment green $CURRENT_FG
+      prompt_segment green $CURRENT_FG "$BRANCH ${vcs_info_msg_0_%% }"
     fi
-    echo -n "$BRANCH ${vcs_info_msg_0_%% }"
   fi
 }
 
