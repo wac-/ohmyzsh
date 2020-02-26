@@ -35,7 +35,6 @@ typeset -aHg AGNOSTER_PROMPT_SEGMENTS=(
     prompt_git
     prompt_bzr
     prompt_hg
-    prompt_end
   )
 
 ### Segment drawing
@@ -236,7 +235,7 @@ prompt_aws() {
 prompt_agnoster_main() {
   RETVAL=$?
   CURRENT_BG='NONE'
-  for prompt_segment in "${AGNOSTER_PROMPT_SEGMENTS[@]}"; do
+  for prompt_segment in "${AGNOSTER_PROMPT_SEGMENTS[@]}" prompt_end; do
     [[ -n $prompt_segment ]] && $prompt_segment
   done
 }
