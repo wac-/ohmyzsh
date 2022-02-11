@@ -41,6 +41,7 @@ alias ts='${ZSH_TMUX_BINARY} new-session -s'
 alias tl='${ZSH_TMUX_BINARY} list-sessions'
 alias tksv='${ZSH_TMUX_BINARY} kill-server'
 alias tkss='${ZSH_TMUX_BINARY} kill-session -t'
+alias tmuxconf='${EDITOR} ${ZSH_TMUX_CONFIG}'
 
 # Determine if the terminal supports 256 colors
 if [[ $terminfo[colors] == 256 ]]; then
