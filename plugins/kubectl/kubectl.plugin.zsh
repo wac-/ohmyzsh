@@ -11,11 +11,11 @@ if (( $+commands[kubectl] )); then
   # If the completion file does not exist, generate it and then source it
   # Otherwise, source it and regenerate in the background
   if [[ ! -f "$ZSH_CACHE_DIR/completions/_kubectl" ]]; then
-    kubectl completion zsh >| "$ZSH_CACHE_DIR/completions/_kubectl"
+    kubectl completion zsh | tee "$ZSH_CACHE_DIR/completions/_kubectl" >/dev/null
     source "$ZSH_CACHE_DIR/completions/_kubectl"
   else
     source "$ZSH_CACHE_DIR/completions/_kubectl"
-    kubectl completion zsh >| "$ZSH_CACHE_DIR/completions/_kubectl" &|
+    kubectl completion zsh | tee "$ZSH_CACHE_DIR/completions/_kubectl" >/dev/null &|
   fi
 fi
 
@@ -112,7 +112,9 @@ function kres(){
 }
 
 # Rollout management.
-alias kgrs='kubectl get rs'
+alias kgrs='kubectl get replicaset'
+alias kdrs='kubectl describe replicaset'
+alias kers='kubectl edit replicaset'
 alias krh='kubectl rollout history'
 alias kru='kubectl rollout undo'
 
@@ -177,6 +179,12 @@ alias kgcj='kubectl get cronjob'
 alias kecj='kubectl edit cronjob'
 alias kdcj='kubectl describe cronjob'
 alias kdelcj='kubectl delete cronjob'
+
+# Job management.
+alias kgj='kubectl get job'
+alias kej='kubectl edit job'
+alias kdj='kubectl describe job'
+alias kdelj='kubectl delete job'
 
 # Only run if the user actually has kubectl installed
 if (( ${+_comps[kubectl]} )); then
