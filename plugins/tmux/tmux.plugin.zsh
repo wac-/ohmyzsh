@@ -41,6 +41,8 @@ alias ts='${ZSH_TMUX_BINARY} new-session -s'
 alias tl='${ZSH_TMUX_BINARY} list-sessions'
 alias tksv='${ZSH_TMUX_BINARY} kill-server'
 alias tkss='${ZSH_TMUX_BINARY} kill-session -t'
+alias tmuxconf='$EDITOR $ZSH_TMUX_CONFIG'
+
 
 # Determine if the terminal supports 256 colors
 if [[ $terminfo[colors] == 256 ]]; then
@@ -48,6 +50,11 @@ if [[ $terminfo[colors] == 256 ]]; then
 else
   export ZSH_TMUX_TERM=$ZSH_TMUX_FIXTERM_WITHOUT_256COLOR
 fi
+
+# Handle $0 according to the standard:
+# https://zdharma-continuum.github.io/Zsh-100-Commits-Club/Zsh-Plugin-Standard.html
+0="${${ZERO:-${0:#$ZSH_ARGZERO}}:-${(%):-%N}}"
+0="${${(M)0:#/*}:-$PWD/$0}"
 
 # Set the correct local config file to use.
 if [[ "$ZSH_TMUX_ITERM2" == "false" && -e "$ZSH_TMUX_CONFIG" ]]; then
@@ -70,7 +77,11 @@ function _zsh_tmux_plugin_run() {
   [[ "$ZSH_TMUX_UNICODE" == "true" ]] && tmux_cmd+=(-u)
 
   # Try to connect to an existing session.
-  [[ "$ZSH_TMUX_AUTOCONNECT" == "true" ]] && $tmux_cmd attach
+  if [[ -n "$ZSH_TMUX_DEFAULT_SESSION_NAME" ]]; then
+    [[ "$ZSH_TMUX_AUTOCONNECT" == "true" ]] && $tmux_cmd attach -t $ZSH_TMUX_DEFAULT_SESSION_NAME
+  else
+    [[ "$ZSH_TMUX_AUTOCONNECT" == "true" ]] && $tmux_cmd attach
+  fi
 
   # If failed, just run tmux, fixing the TERM variable if requested.
   if [[ $? -ne 0 ]]; then
@@ -79,7 +90,11 @@ function _zsh_tmux_plugin_run() {
     elif [[ -e "$ZSH_TMUX_CONFIG" ]]; then
       tmux_cmd+=(-f "$ZSH_TMUX_CONFIG")
     fi
-    $tmux_cmd new-session
+    if [[ -n "$ZSH_TMUX_DEFAULT_SESSION_NAME" ]]; then
+      $tmux_cmd new-session -s $ZSH_TMUX_DEFAULT_SESSION_NAME
+    else
+      $tmux_cmd new-session
+    fi
   fi
 
   if [[ "$ZSH_TMUX_AUTOQUIT" == "true" ]]; then
