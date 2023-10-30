@@ -1,0 +1,7 @@
+dependencies:
+  - name: z
+    path: plugins/z
+    repo: agkozak/zsh-z
+    branch: master
+    version: 585d1b2c5ad1ca0b21256db401382d751cc7b2a9
+    other_stuff: 1

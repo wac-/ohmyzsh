@@ -1,0 +1,23 @@
+name: External dependencies
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '34 3 * * */8'
+
+jobs:
+  check:
+    name: Check for updates
+    runs-on: ubuntu-latest
+    container: alpine:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install yq
+        run: apk add --no-cache yq
+      - name: Fetch updates
+        run: |
+          yq -o tsv '.dependencies' deps.yml | sed 1d | \
+          while read name path repo branch version; do
+            echo "Checking $name ($path)..."
+            endpoint="https://api.github.com/repos/${repo}/commits/${branch}"
+          done
