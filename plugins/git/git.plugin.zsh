@@ -157,6 +157,7 @@ alias gbg='LANG=C git branch -vv | grep ": gone\]"'
 alias gco='git checkout'
 alias gcor='git checkout --recurse-submodules'
 alias gcb='git checkout -b'
+alias gcB='git checkout -B'
 alias gcd='git checkout $(git_develop_branch)'
 alias gcm='git checkout $(git_main_branch)'
 alias gcp='git cherry-pick'
@@ -166,6 +167,8 @@ alias gclean='git clean --interactive -d'
 alias gcl='git clone --recurse-submodules'
 
 function gccd() {
+  setopt localoptions extendedglob
+
   # get repo URI from args based on valid formats: https://git-scm.com/docs/git-clone#URLS
   local repo="${${@[(r)(ssh://*|git://*|ftp(s)#://*|http(s)#://*|*@*)(.git/#)#]}:-$_}"
 
