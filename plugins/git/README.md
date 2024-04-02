@@ -70,6 +70,7 @@ plugins=(... git)
 | `gca!`                 | `git commit --verbose --all --amend`                                                                                            |
 | `gcan!`                | `git commit --verbose --all --no-edit --amend`                                                                                  |
 | `gcans!`               | `git commit --verbose --all --signoff --no-edit --amend`                                                                        |
+| `gcann!`               | `git commit --verbose --all --date=now --no-edit --amend`                                                                       |
 | `gc!`                  | `git commit --verbose --amend`                                                                                                  |
 | `gcn!`                 | `git commit --verbose --no-edit --amend`                                                                                        |
 | `gcs`                  | `git commit -S`                                                                                                                 |
@@ -151,6 +152,7 @@ plugins=(... git)
 | `grbd`                 | `git rebase $(git_develop_branch)`                                                                                              |
 | `grbm`                 | `git rebase $(git_main_branch)`                                                                                                 |
 | `grbom`                | `git rebase origin/$(git_main_branch)`                                                                                          |
+| `grf`                  | `git reflog`                                                                                                                    |
 | `gr`                   | `git remote`                                                                                                                    |
 | `grv`                  | `git remote --verbose`                                                                                                          |
 | `gra`                  | `git remote add`                                                                                                                |

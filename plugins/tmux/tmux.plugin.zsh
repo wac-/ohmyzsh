@@ -11,17 +11,27 @@
 # Automatically close the terminal when tmux exits
 : ${ZSH_TMUX_AUTOQUIT:=$ZSH_TMUX_AUTOSTART}
 # Set term to screen or screen-256color based on current terminal support
+: ${ZSH_TMUX_DETACHED:=false}
+# Set detached mode
 : ${ZSH_TMUX_FIXTERM:=true}
 # Set '-CC' option for iTerm2 tmux integration
 : ${ZSH_TMUX_ITERM2:=false}
 # The TERM to use for non-256 color terminals.
-# Tmux states this should be screen, but you may need to change it on
+# Tmux states this should be tmux|screen, but you may need to change it on
 # systems without the proper terminfo
-: ${ZSH_TMUX_FIXTERM_WITHOUT_256COLOR:=screen}
+if [[ -e /usr/share/terminfo/t/tmux ]]; then
+  : ${ZSH_TMUX_FIXTERM_WITHOUT_256COLOR:=tmux}
+else
+  : ${ZSH_TMUX_FIXTERM_WITHOUT_256COLOR:=screen}
+fi
 # The TERM to use for 256 color terminals.
-# Tmux states this should be screen-256color, but you may need to change it on
+# Tmux states this should be (tmux|screen)-256color, but you may need to change it on
 # systems without the proper terminfo
-: ${ZSH_TMUX_FIXTERM_WITH_256COLOR:=screen-256color}
+if [[ -e /usr/share/terminfo/t/tmux-256color ]]; then
+  : ${ZSH_TMUX_FIXTERM_WITH_256COLOR:=tmux-256color}
+else
+  : ${ZSH_TMUX_FIXTERM_WITH_256COLOR:=screen-256color}
+fi
 # Set the configuration path
 if [[ -e $HOME/.tmux.conf ]]; then
   : ${ZSH_TMUX_CONFIG:=$HOME/.tmux.conf}
@@ -40,14 +50,26 @@ if ! (( $+commands[${ZSH_TMUX_BINARY}] )); then
 fi
 
 # ALIASES
+function _build_tmux_alias {
+  eval "function $1 {
+    if [[ -z \$1 ]] || [[ \${1:0:1} == '-' ]]; then
+      ${ZSH_TMUX_BINARY} $2 \"\$@\"
+    else
+      ${ZSH_TMUX_BINARY} $2 $3 \"\$@\"
+    fi
+  }"
+}
 
-alias ta='${ZSH_TMUX_BINARY} attach -t'
-alias tad='${ZSH_TMUX_BINARY} attach -d -t'
-alias ts='${ZSH_TMUX_BINARY} new-session -s'
-alias tl='${ZSH_TMUX_BINARY} list-sessions'
 alias tksv='${ZSH_TMUX_BINARY} kill-server'
-alias tkss='${ZSH_TMUX_BINARY} kill-session -t'
+alias tl='${ZSH_TMUX_BINARY} list-sessions'
 alias tmuxconf='${EDITOR} ${ZSH_TMUX_CONFIG}'
+
+_build_tmux_alias "ta" "attach" "-t"
+_build_tmux_alias "tad" "attach -d" "-t"
+_build_tmux_alias "ts" "new-session" "-s"
+_build_tmux_alias "tkss" "kill-session" "-t"
+
+unfunction _build_tmux_alias
 
 # Determine if the terminal supports 256 colors
 if [[ $terminfo[colors] == 256 ]]; then
@@ -81,11 +103,13 @@ function _zsh_tmux_plugin_run() {
   [[ "$ZSH_TMUX_ITERM2" == "true" ]] && tmux_cmd+=(-CC)
   [[ "$ZSH_TMUX_UNICODE" == "true" ]] && tmux_cmd+=(-u)
 
+  local _detached=""
+  [[ "$ZSH_TMUX_DETACHED" == "true" ]] && _detached="-d"
   # Try to connect to an existing session.
   if [[ -n "$ZSH_TMUX_DEFAULT_SESSION_NAME" ]]; then
-    [[ "$ZSH_TMUX_AUTOCONNECT" == "true" ]] && $tmux_cmd attach -t $ZSH_TMUX_DEFAULT_SESSION_NAME
+    [[ "$ZSH_TMUX_AUTOCONNECT" == "true" ]] && $tmux_cmd attach $_detached -t $ZSH_TMUX_DEFAULT_SESSION_NAME
   else
-    [[ "$ZSH_TMUX_AUTOCONNECT" == "true" ]] && $tmux_cmd attach
+    [[ "$ZSH_TMUX_AUTOCONNECT" == "true" ]] && $tmux_cmd attach $_detached
   fi
 
   # If failed, just run tmux, fixing the TERM variable if requested.
