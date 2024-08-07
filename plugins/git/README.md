@@ -59,6 +59,7 @@ plugins=(... git)
 | `gcpc`                 | `git cherry-pick --continue`                                                                                                    |
 | `gclean`               | `git clean --interactive -d`                                                                                                    |
 | `gcl`                  | `git clone --recurse-submodules`                                                                                                |
+| `gclf`                 | `git clone --recursive --shallow-submodules --filter=blob:none --also-filter-submodules`                                        |
 | `gccd`                 | `git clone --recurse-submodules "$@" && cd "$(basename $\_ .git)"`                                                              |
 | `gcam`                 | `git commit --all --message`                                                                                                    |
 | `gcas`                 | `git commit --all --signoff`                                                                                                    |
@@ -88,7 +89,7 @@ plugins=(... git)
 | `gdnolock`             | `git diff $@ ":(exclude)package-lock.json" ":(exclude)\*.lock"`                                                                 |
 | `gdt`                  | `git diff-tree --no-commit-id --name-only -r`                                                                                   |
 | `gf`                   | `git fetch`                                                                                                                     |
-| `gfa`                  | `git fetch --all --prune`                                                                                                       |
+| `gfa`                  | `git fetch --all --tags --prune`                                                                                                       |
 | `gfo`                  | `git fetch origin`                                                                                                              |
 | `gg`                   | `git gui citool`                                                                                                                |
 | `gga`                  | `git gui citool --amend`                                                                                                        |
@@ -111,7 +112,7 @@ plugins=(... git)
 | `gfg`                  | `git ls-files \| grep`                                                                                                          |
 | `gm`                   | `git merge`                                                                                                                     |
 | `gma`                  | `git merge --abort`                                                                                                             |
-| `gmc`                  | `git merge --continue`                                                                                                             |
+| `gmc`                  | `git merge --continue`                                                                                                          |
 | `gms`                  | `git merge --squash`                                                                                                            |
 | `gmom`                 | `git merge origin/$(git_main_branch)`                                                                                           |
 | `gmum`                 | `git merge upstream/$(git_main_branch)`                                                                                         |
