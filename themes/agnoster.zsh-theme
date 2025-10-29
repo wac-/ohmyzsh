@@ -43,12 +43,12 @@ typeset -aHg AGNOSTER_PROMPT_SEGMENTS=(
 CURRENT_BG='NONE'
 case ${SOLARIZED_THEME:-dark} in
     light)
-      CURRENT_FG='white'
-      CURRENT_DEFAULT_FG='white'
+      CURRENT_FG=${CURRENT_FG:-'white'}
+      CURRENT_DEFAULT_FG=${CURRENT_DEFAULT_FG:-'white'}
       ;;
     *)
-      CURRENT_FG='black'
-      CURRENT_DEFAULT_FG='default'
+      CURRENT_FG=${CURRENT_FG:-'black'}
+      CURRENT_DEFAULT_FG=${CURRENT_DEFAULT_FG:-'default'}
       ;;
 esac
 
@@ -314,6 +314,9 @@ prompt_dir() {
 
 # Virtualenv: current working virtualenv
 prompt_virtualenv() {
+  if [ -n "$CONDA_DEFAULT_ENV" ]; then
+    prompt_segment magenta $CURRENT_FG "🐍 $CONDA_DEFAULT_ENV"
+  fi
   if [[ -n "$VIRTUAL_ENV" && -n "$VIRTUAL_ENV_DISABLE_PROMPT" ]]; then
     prompt_segment "$AGNOSTER_VENV_BG" "$AGNOSTER_VENV_FG" "(${VIRTUAL_ENV:t:gs/%/%%})"
   fi
@@ -348,6 +351,12 @@ prompt_aws() {
     *-prod|*production*) prompt_segment "$AGNOSTER_AWS_PROD_BG" "$AGNOSTER_AWS_PROD_FG"  "AWS: ${AWS_PROFILE:gs/%/%%}" ;;
     *) prompt_segment "$AGNOSTER_AWS_BG" "$AGNOSTER_AWS_FG" "AWS: ${AWS_PROFILE:gs/%/%%}" ;;
   esac
+}
+
+prompt_terraform() {
+  local terraform_info=$(tf_prompt_info)
+  [[ -z "$terraform_info" ]] && return
+  prompt_segment magenta yellow "TF: $terraform_info"
 }
 
 ## Main prompt
