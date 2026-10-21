@@ -23,6 +23,14 @@ Twitter), and join us on [Discord](https://discord.gg/ohmyzsh).
 [![Mastodon Follow](https://img.shields.io/mastodon/follow/111169632522566717?label=%40ohmyzsh&domain=https%3A%2F%2Fmstdn.social&logo=mastodon&style=flat)](https://mstdn.social/@ohmyzsh)
 [![Discord server](https://img.shields.io/discord/642496866407284746)](https://discord.gg/ohmyzsh)
 
+<a href="https://commitgoods.com/collections/oh-my-zsh?utm_source=github">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://cdn.shopify.com/s/files/1/0101/8752/files/commitgoods-badge-stacked-navy-dark.svg">
+    <img src="https://cdn.shopify.com/s/files/1/0101/8752/files/commitgoods-badge-stacked-navy.svg" height="28" alt="Official merch on commitgoods.com">
+  </picture>
+</a>
+
+
 <details>
 <summary>Table of Contents</summary>
 
@@ -37,6 +45,7 @@ Twitter), and join us on [Discord](https://discord.gg/ohmyzsh).
     - [Using Plugins](#using-plugins)
   - [Themes](#themes)
     - [Selecting A Theme](#selecting-a-theme)
+  - [Shellsavers](#shellsavers)
   - [FAQ](#faq)
 - [Advanced Topics](#advanced-topics)
   - [Advanced Installation](#advanced-installation)
@@ -46,7 +55,7 @@ Twitter), and join us on [Discord](https://discord.gg/ohmyzsh).
     - [Manual Installation](#manual-installation)
   - [Installation Problems](#installation-problems)
   - [Custom Plugins And Themes](#custom-plugins-and-themes)
-  - [Enable GNU ls In macOS And freeBSD Systems](#enable-gnu-ls-in-macos-and-freebsd-systems)
+  - [Enable GNU ls In macOS And FreeBSD Systems](#enable-gnu-ls-in-macos-and-freebsd-systems)
   - [Skip Aliases](#skip-aliases)
   - [Async git prompt](#async-git-prompt)
 - [Getting Updates](#getting-updates)
@@ -70,7 +79,7 @@ Twitter), and join us on [Discord](https://discord.gg/ohmyzsh).
 | O/S            | Status |
 | :------------- | :----: |
 | Android        |   ✅   |
-| freeBSD        |   ✅   |
+| FreeBSD        |   ✅   |
 | LCARS          |   🛸   |
 | Linux          |   ✅   |
 | macOS          |   ✅   |
@@ -233,6 +242,33 @@ If you only know which themes you don't like, you can add them similarly to an i
 ZSH_THEME_RANDOM_IGNORED=(pygmalion tjkirch_mod)
 ```
 
+### Shellsavers
+
+Give your terminal a little downtime with `omz shellsaver`—our playful name for
+terminal screensavers. The aquarium is the default; choose another scene to change the mood:
+
+```zsh
+omz shellsaver                 # A quiet aquarium full of sea shells
+omz shellsaver logo            # The updater's rainbow logo, bouncing around
+omz shellsaver hermit          # A slightly lost hermit crab
+omz shellsaver party           # A rainbow stage and a dancing crowd
+```
+
+Press any key or Ctrl-C to return to your shell. Screensavers run only when invoked
+and restore the terminal when they exit. No plugin or configuration change is needed.
+Use `omz help` to discover the command, and Tab to complete scene names and options.
+
+```zsh
+omz shellsaver aquarium --seconds 30  # Stop automatically after 30 seconds
+omz shellsaver logo --mono            # Use the terminal's foreground color
+omz shellsaver --list                 # List scenes (aquarium is the default)
+omz shellsaver --help                 # Show all scenes and options
+```
+
+Requires Zsh 5.8 or newer, `stty`, and an xterm-compatible terminal with alternate-screen
+support. No additional animation package is required. `NO_COLOR` is respected.
+A window of at least 49 columns by 18 rows is recommended.
+
 ### FAQ
 
 If you have some more questions or issues, you might find a solution in our
@@ -349,7 +385,7 @@ If you have many functions that go well together, you can put them as a `XYZ.plu
 If you would like to override the functionality of a plugin distributed with Oh My Zsh, create a plugin of the
 same name in the `custom/plugins/` directory and it will be loaded instead of the one in `plugins/`.
 
-### Enable GNU ls In macOS And freeBSD Systems
+### Enable GNU ls In macOS And FreeBSD Systems
 
 <a name="enable-gnu-ls"></a>
 
@@ -464,6 +500,22 @@ NOTE: you can control how often Oh My Zsh checks for updates with the following 
 zstyle ':omz:update' frequency 7
 # This will check for updates every time you open the terminal (not recommended)
 zstyle ':omz:update' frequency 0
+```
+
+By default, updates always pull the latest changes. If you'd rather let others kick the tires first
+before an update reaches your machine, you can set a cooldown (in days). You'll still get everything —
+just a little later:
+
+```sh
+# Only apply updates that are at least 10 days old
+zstyle ':omz:update' cooldown 10
+```
+
+`omz update` honors this setting. If you call `upgrade.sh` directly, pass the same
+value with `-c`, because that script does not read your `.zshrc`:
+
+```sh
+$ZSH/tools/upgrade.sh -c 10
 ```
 
 ### Updates Verbosity
